@@ -25,9 +25,11 @@ def bartz(d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall):
                                                                                              1.8) * c_p * math.pow(
         visc, 0.2) * math.pow((t_gas / t_boundary), (0.8 - 0.2 * 0.6)))
 
-
-# chamber diameter(0.08m), lambda curve, 15degree nozzle
-
+#pressure is convereted from atm to pa
+# Throat Area Equation
+def nozzleAreaEquation(mdot, pres, temp, rbar, gam): 
+    return (mdot / (pres * 101325)) * math.sqrt(temp * rbar / gam) * math.pow(
+            (1 + ((gam - 1) / 2)), ((gam + 1) / (2 * (gam - 1))))
 
 class Rocket:
     def __init__(self, chem, mdot, l_star, inj_d):
@@ -37,19 +39,14 @@ class Rocket:
         self.inj_d = inj_d
         self.contourPoints = 0
         self.contour = 0
-        # self.inj_r = self.inj_d/2
-
-        # Specific impulse in seconds
-        self.isp_s = self.chem.isp / 9.8
-
-        # Gas Constant per molecular weight (specific R) in kJ
-        self.rbar = 8.31446261815324 / chem.m * 1000
+        self.isp_s = self.chem.isp / 9.8 # Specific impulse in seconds
+        self.rbar = 8.31446261815324 / chem.m * 1000 # Gas Constant per molecular weight (specific R) in kJ
 
         # Throat Area Equation
-        self.a_thr = (self.mdot / (chem.p * 101325)) * math.sqrt(chem.t * self.rbar / chem.gam) * math.pow(
-            (1 + ((chem.gam - 1) / 2)), ((chem.gam + 1) / (2 * (chem.gam - 1))))
-
-        # p is in atm, conversion constant to Pa, might change to Pa later. area is in m^2
+        self.a_thr = nozzleAreaEquation(self.mdot, chem.p, chem.t, self.rbar, chem.gam)
+        
+        #(self.mdot / (chem.p * 101325)) * math.sqrt(chem.t * self.rbar / chem.gam) * math.pow(
+        #    (1 + ((chem.gam - 1) / 2)), ((chem.gam + 1) / (2 * (chem.gam - 1))))
 
         # Nozzle Exit Area and diameters via Expansion Ratio and
         self.a_noz = self.a_thr * chem.ae
@@ -126,3 +123,5 @@ class Rocket:
             y = np.append(y, f(temp_x))
             x = np.append(x, temp_x)
         self.contour = np.array([x], [y])
+
+
