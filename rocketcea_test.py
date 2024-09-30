@@ -1,3 +1,7 @@
+
+# import sys
+# sys.path.insert(0, r"C:\Users\emmet\AppData\Local\Programs\Python\Python310\Lib\site-packages")
+
 from rocketcea.cea_obj import CEA_Obj
 import rocketcea.cea_obj as cea_obj
 import rocketcea.py_cea as py_cea
