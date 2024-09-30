@@ -3,11 +3,5 @@ numpy
 pyparsing
 python-dateutil
 scipy
-future
-pillow
-rocketprops
-
-# for FEA
-# ffmpeg
-
 #rocketcea
+#CEA_Wrap

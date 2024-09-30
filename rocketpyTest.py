@@ -1,2 +1,0 @@
-import rocketpy as rp
-
