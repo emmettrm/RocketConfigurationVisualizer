@@ -1,6 +1,11 @@
 # To Do List
 small tasks:
+make everything numpy arrays
+make flow seperation calculator
+make volume calculator take take convergine 
 
+cooling calculator to do:
+make "geometry" take input "contour" (see if radius or diameter is needed)
 
 major tasks
 1. bartz equasion needs a complete overhall to test accuracy, viscosity is a constant for some reason
@@ -12,6 +17,18 @@ major tasks
 7. make engine able to run with lower contour resolution
 8. look into making solveMach run faster
 9. code thrust level so it can do a linear sweep that is O(n) rather than the current O(nlog(n)) method
+
+major things to do:
+make rocket simulator with rocketpy
+complete overhall of equations
+check output curves to other caluculators to verify data accuracy
+look into making CEA run faster somehow(either by writing my own CEA wrapper of modifying one of the existing ones)
+code thrust level so it can do a linear sweep that is O(n) rather than the current O(nlog(n)) method
+code a UI that is easy to distribute, intuitive to use, and has full functionallity
+add 1d regen cooling channel caluclator(in progress by emmett)
+add film cooling calculation capabilities
+calculate flow seperation
+calculate combustion instability modes
 
 eventually
 1. get ansyst o run through python

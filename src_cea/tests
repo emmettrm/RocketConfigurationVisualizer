@@ -4,8 +4,10 @@ import matplotlib.pyplot as plt
 import scipy as sp
 import numpy as np
 from scipy.optimize import fsolve
+from itertools import product
+import time
 
-
+"""
 def myFunction(z, alpha):
     phi = z[0]
     mu = z[1]
@@ -62,4 +64,22 @@ l_mix = np.sqrt(2)*tau*(((k_m*mu_2)/((k_m+1)*phi_2))*np.sqrt(deltap_2/rho_2) + (
 print(f'part 1:{(k_m*mu_2)/((k_m+1)*phi_2)*np.sqrt(deltap_2/rho_2)}')
 print(f'part 2:{mu_1/((k_m+1)*phi_1)*np.sqrt(deltap_1/rho_1)}')
 print(f'l_mix = {l_mix}')
+"""
 
+def simple_func(x, y, z):
+    return (x ** 3) + (y ** 2) + z
+
+a = [1, 2, 3, 4]
+b = [1, 2, 3, 4]
+c = [1, 2, 3, 4]
+
+if __name__ == "__main__":
+    #arraymap = print(*product(a, b, c))
+    st = time.time()
+    result = list(map(simple_func, *zip(*product(a, b, c))))
+    et = time.time()
+    print(et-st)
+
+
+
+#print(arraymap)

@@ -7,9 +7,10 @@ from scipy.optimize import fsolve
 from rocketcea.cea_obj import CEA_Obj
 #from .chemistryCEA import ChemistryCEA
 from .runCEA import RunCEA
+#from .mylibrcc import optimize_channel2
 
 class ThrustLevel:
-    def __init__(self, fuel, cea, pCham, mr, mdot, area_arr, pAmbient = None, ae = None, frozen = 1):
+    def __init__(self, fuel, cea, pCham, mr, mdot, area_arr, pAmbient = None, ae = None, frozen = 1, eta = 1):
         if ae == None:
             #print('chamber pressure:{}\nambient pressure:{}'.format(pCham, pAmbient))
             st = time.time()
@@ -52,15 +53,18 @@ class ThrustLevel:
         self.total_watts = 0
         self.max_fuel_heat = 0
         self.Cstar = self.cham.Cstar
+        self.eta = eta
         #print('mdot:{}\nchamber pressure:{}\nthroat temperature:{}\nthroat rbar:{}\nthroat gamma:{}'.format(self.mdot, self.cham.p, self.thr.t, self.thr.rbar, self.thr.gam))
-        self.thr.a = self.throatAreaEquation(self.mdot, self.cham.p, self.thr.t, self.thr.rbar, self.thr.gam)
+        self.thr.a = self.throatAreaEquation(self.mdot, self.cham.p, self.cham.t, self.thr.rbar, self.thr.gam)
         self.exit.a = self.thr.a * self.exit.aeat
         self.thr.d = 2 * math.sqrt(self.thr.a / math.pi)
         self.exit.d = 2 * math.sqrt(self.exit.a / math.pi)
         #self.isp_s, self.nozzle_mode = self.get_isp()
         #self.Cstar = self.cham.p * self.thr.a / self.mdot
-        self.calcThrust(1.01325)
+        self.calcThrust(pAmbient)
         self.isp_s = self.thrust/(self.mdot*9.8)
+        self.data_in = {}
+        self.data_out = {}
 
         # Specific impulse in seconds---------------------------------------------------------------------------------------------------------------------------
         #self.isp_s = self.exit.isp / 9.8 #9.8 is gravitational constant
@@ -123,7 +127,7 @@ class ThrustLevel:
 
     def heatCalcs(self, area_arr, contour, wall_temp, mr):
         self.area_arr = area_arr
-        self.contour = contour 
+        self.contour = contour
         self.wall_temp = wall_temp #NOTE: variable not used yet
         self.mr = mr
         st = time.time()
@@ -225,7 +229,8 @@ class ThrustLevel:
 
 
     def calcThrust(self, pAmbient):#make dependant on altitude input
-        self.thrust = self.mdot * self.exit.mach * self.exit.son + (self.exit.p - pAmbient)*self.exit.a
+        self.thrust = (self.mdot * self.exit.mach * self.exit.son + (self.exit.p - pAmbient)*self.exit.a) * self.eta
+        print(f'eta: {self.eta}')
 
     def bartz(self, d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall):
         """bartz equation calculator"""
@@ -301,6 +306,54 @@ class ThrustLevel:
             #print('thr diameter:{}\nchamber pressure:{}\nc star:{}\ncontour:{}\nchamber cp:{}\ntemperature array:{}\nwall temp{}'.format(self.thr.d, self.cham.p, self.Cstar, self.contour, self.cham.cp, self.temp_arr, self.wall_temp))
             h_g_arr[1,i] = self.bartz(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp) #add viscosity to this
         return h_g_arr
+
+    def runRCC(self):
+        self.data_in['e'] = #float(self.data_in['e'])
+        self.data_in['sigmae'] = #float(self.data_in['sigmae'])*1e6
+        self.data_in['max_iterations'] = #int(self.data_in['max_iterations'])
+        self.data_in['max_iterations_opt'] = #int(self.data_in['max_iterations_opt'])
+        self.data_in['Twc_primary'] = #float(self.data_in['Twc_primary'])
+        self.data_in['Tc_primary'] = #float(self.data_in['Tc_primary'])
+        self.data_in['Twg_primary'] = #float(self.data_in['Twg_primary'])
+        self.data_in['Taw_primary'] = #float(self.data_in['Taw_primary'])
+        self.data_in['m._c'] = #float(self.data_in['m._c'])
+        self.data_in['FT_min'] = #float(self.data_in['FT_min'])
+        self.data_in['CCW_min'] = #float(self.data_in['CCW_min'])
+        self.data_in['CCW'] = #float(self.data_in['CCW'])
+        self.data_in['FT'] = 
+        self.data_in['CCH_min'] = #float(self.data_in['CCH_min'])
+        self.data_in['CCH'] = #float(self.data_in['CCH'])
+        self.data_in['IWT'] = #float(self.data_in['IWT'])
+        self.data_in['fs_wall'] = #float(self.data_in['fs_wall'])
+        self.data_in['k_w'] = #float(self.data_in['k_w'])
+        self.data_in['tol_opt'] = #float(self.data_in['tol_opt'])
+        self.data_in['tol'] = #float(self.data_in['tol'])
+        self.data_in['w'] = #float(self.data_in['w'])
+        self.data_in['of'] = self.mr #float(self.data_in['of'])
+        self.data_in['p0'] = self.cham.p #float(self.data_in['p0'])*1e6
+        
+        if self.data_in['constant_dim'] == 'FT': #can 
+            self.data_in['dim_constant'] = 'FT'
+            self.data_in['FT'] = float(self.data_in['FT'])
+        else:
+            print(f'constant_dim being set to default of constant channel width(CCW)')
+            self.data_in['dim_constant'] = 'CCW'
+            self.data_in['CCW'] = float(self.data_in['CCW'])
+        
+
+        self.data_in['channel_number_dim'] = #self.data_in['channel_number_dim'].split(',')
+        self.data_in['channel_number_dim'] = #list(map(float, self.data_in['channel_number_dim']))
+        self.data_in['channel_number_qt'] = #self.data_in['channel_number_qt'].split(',')
+        self.data_in['channel_number_qt'] = #list(map(int, self.data_in['channel_number_qt']))
+        
+        self.data_in['channel_number'] = []
+        """
+        for i in range(0,len(entrada['channel_number_qt'])):
+            entrada['channel_number'].append([entrada['channel_number_dim'][i],entrada['channel_number_qt'][i]])
+        """
+        self.data_in['channel_number'] = []
+        for i in range(0,len(self.data_in['channel_number_qt'])):
+            self.data_in['channel_number'].append([self.data_in['channel_number_dim'][i],self.data_in['channel_number_qt'][i]])
 
     def calcHeatFlux(self):
         heat_flux_arr = self.h_g_arr.copy()

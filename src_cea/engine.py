@@ -13,7 +13,7 @@ from .fluidProperties.fluidProperties import FluidProperties
 import time
 
 class Engine:
-    def __init__(self, title, fuel, ox, nozzle_type, Mr, pMaxCham, mdotMax, Lstar, Dcham, wall_temp, r1, r2, r3, conv_angle, fuel_delta_t, pMinExitRatio = [], filmCoolingPercent = 0, div_angle = None, contourStep = 1e-4, customFuel = None, frozen = 1, fac_CR = None, pAmbient = 1.01325, doContours = True):
+    def __init__(self, title, fuel, ox, nozzle_type, Mr, pMaxCham, mdotMax, Lstar, Dcham, wall_temp, r1, r2, r3, conv_angle, fuel_delta_t, pMinExitRatio = [], filmCoolingPercent = 0, div_angle = None, contourStep = 1e-4, customFuel = None, frozen = 1, fac_CR = None, pAmbient = 1.01325, doContours = True, eta = 1):
         self.starttime = time.time()
         self.title = title
         self.fuel = FluidProperties(fuel)
@@ -46,6 +46,7 @@ class Engine:
         self.contourPoints = None
         self.contour = None
         self.area_arr = None
+        self.eta = eta
         #self.max, self.min = self.variableThrustOptimizerold()
         st = time.time()
         self.throttles = self.variableThrustOptimizer(pMinExitRatio)
@@ -112,7 +113,7 @@ class Engine:
                         cpGuess -= cpStep
                         mdotGuess -= mdotStep
                 #print('chamber pressure:{}\nmr:{}\nmdot:{}\narea array:{}\nae:{}'.format(cpGuess, self.Mr, mdotGuess, self.area_arr, ae))
-                nozmin = ThrustLevel(self.fuel, self.cea, cpGuess, self.Mr, mdotGuess, self.area_arr, ae = ae, frozen = self.frozen, pAmbient = self.pAmbient)
+                nozmin = ThrustLevel(self.fuel, self.cea, cpGuess, self.Mr, mdotGuess, self.area_arr, ae = ae, frozen = self.frozen, pAmbient = self.pAmbient, eta = self.eta)
                 pGuess = nozmin.exit.p
                 #print('pressure guess:{}'.format(pGuess))
             #print('min nozzle exit pressure in bar: {}'.format(nozmin.exit.p))
@@ -124,7 +125,7 @@ class Engine:
 
         if self.nozzle_type == 'bell80' or 'conical':
             st = time.time()
-            nozmax = ThrustLevel(self.fuel, self.cea, self.pMaxCham, self.Mr, self.mdotMax, self.area_arr, pAmbient = self.pAmbient, frozen = self.frozen)
+            nozmax = ThrustLevel(self.fuel, self.cea, self.pMaxCham, self.Mr, self.mdotMax, self.area_arr, pAmbient = self.pAmbient, frozen = self.frozen, eta = self.eta)
             et = time.time()
             print(f'ThrustLevel runtime" {et-st}s')
             if pMinExitRatio == None or pMinExitRatio == []:
@@ -150,7 +151,7 @@ class Engine:
     def variableThrustOptimizerold(self):
 
         if self.nozzle_type == 'bell80' or 'conical':
-            nozmax = ThrustLevel(self.fuel, self.cea, self.pMaxCham, self.Mr, self.mdotMax, self.area_arr, pAmbient = self.pAmbient, frozen = self.frozen)
+            nozmax = ThrustLevel(self.fuel, self.cea, self.pMaxCham, self.Mr, self.mdotMax, self.area_arr, pAmbient = self.pAmbient, frozen = self.frozen, eta = self.eta)
             if self.pMinExitRatio == None or self.pMinExitRatio == []:
                 nozmin = None
                 #print('no min throttle pressure given. skipping throttle calculations')
@@ -235,7 +236,6 @@ class Engine:
             '''
         else: #this runs if the nozzle type input does not match any of the above nozzle types
             print("invalid nozzle type")
-        
 
         functions = [
             lambda x: contourPoints[0][1],
@@ -290,13 +290,13 @@ class Engine:
     def variablesDisplay(self, minthrust = False, allthrust = False):
         print("{}{}:{}".format('\033[33m', self.title, '\033[0m'))
         print("Propellants:{}, {}".format(self.fuel.name, self.ox.name))
-        print("Chamber Length: {0:.2f} in".format(self.chamber_length / 0.0254))
-        print("Chamber Diameter: {0:.2f} in".format(self.Dcham / 0.0254))
-        print("Exit Diameter: {0:.2f} in".format(self.max.exit.d / 0.0254))
-        print("Throat Diameter: {0:.2f} in".format(self.max.thr.d / 0.0254))
-        print("Total Length: {0:.2f} in".format((self.contourPoints[6][0]-self.contourPoints[0][0]) / 0.0254))
+        print("Chamber Length: {0:.3f} in".format(self.chamber_length / 0.0254))
+        print("Chamber Diameter: {0:.3f} in".format(self.Dcham / 0.0254))
+        print("Exit Diameter: {0:.3f} in".format(self.max.exit.d / 0.0254))
+        print("Throat Diameter: {0:.3f} in".format(self.max.thr.d / 0.0254))
+        print("Total Length: {0:.3f} in".format((self.contourPoints[6][0]-self.contourPoints[0][0]) / 0.0254))
         print("Volume: {0:.2f} cc".format(self.chamber_volume * 1000000))
-
+        #print("A*: {0:.2f} m^2".format(self.))
         print("{}{}:{}".format('\033[92m', 'Max Thrust', '\033[0m'))
         print("Max Thrust: {0:.2f} N ({1:.2f} lbf)".format(self.max.thrust, (self.max.thrust*0.224809)))
         print("Max isp: {0:.2f} s".format(self.max.isp_s))
