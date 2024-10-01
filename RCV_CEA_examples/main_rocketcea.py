@@ -1,12 +1,9 @@
-from src.chemistry import Chemistry
-from src_cea.chemistryCEA import ChemistryCEA
-from src.rocket import Rocket
-from src_cea.flight import Flight
 import math
-from src_cea.engine import Engine
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy as sp
+import os
+import sys
+parent_directory = os.path.abspath('..')
+sys.path.append(parent_directory)
+from RocketConfigurationVisualizer2.src_cea.engine import Engine
 
 #test engine 
 title = 'APRL Engine mu2 Sizing'

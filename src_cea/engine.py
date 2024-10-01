@@ -7,7 +7,7 @@ from scipy.optimize import fsolve
 from rocketcea.cea_obj import CEA_Obj, add_new_fuel
 # from rocketcea.cea_obj import add_new_fuel
 # from rocketcea.cea_obj_w_units import CEA_Obj
-from .chemistryCEA import ChemistryCEA
+from .archived_code.chemistryCEA import ChemistryCEA
 from .thrustLevel import ThrustLevel
 from .fluidProperties.fluidProperties import FluidProperties
 import time

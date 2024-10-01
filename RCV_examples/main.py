@@ -1,9 +1,10 @@
-from src.chemistry import Chemistry
-from src.rocket import Rocket
 import math
-import numpy as np
-import matplotlib.pyplot as plt
-import scipy as sp
+import os
+import sys
+parent_directory = os.path.abspath('..')
+sys.path.append(parent_directory)
+from RocketConfigurationVisualizer2.src.chemistry import Chemistry
+from RocketConfigurationVisualizer2.src.rocket import Rocket
 
 title = 'Stinger Engine Sizing'
 chems = Chemistry.parse_initVeriables(r'cea_data\test_2-3of_15atm')
