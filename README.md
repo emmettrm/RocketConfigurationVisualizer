@@ -1,47 +1,19 @@
-# To Do List
-small tasks:
-make everything numpy arrays
-make flow seperation calculator
-make volume calculator take take convergine 
-
-cooling calculator to do:
-make "geometry" take input "contour" (see if radius or diameter is needed)
-
-major tasks
-1. bartz equasion needs a complete overhall to test accuracy, viscosity is a constant for some reason
-2. make engines class to run multiple engines
-3. make prop feed class that has tank stats and stuff
-4. make rocket class that takes engine and prop feed classes as inharitence
-5. make engines class somhow able to take rocket classes too and iterate
-6. look into making rocketCEA run faster
-7. make engine able to run with lower contour resolution
-8. look into making solveMach run faster
-9. code thrust level so it can do a linear sweep that is O(n) rather than the current O(nlog(n)) method
-
-major things to do:
-make rocket simulator with rocketpy
-complete overhall of equations
-check output curves to other caluculators to verify data accuracy
-look into making CEA run faster somehow(either by writing my own CEA wrapper of modifying one of the existing ones)
-code thrust level so it can do a linear sweep that is O(n) rather than the current O(nlog(n)) method
-code a UI that is easy to distribute, intuitive to use, and has full functionallity
-add 1d regen cooling channel caluclator(in progress by emmett)
-add film cooling calculation capabilities
-calculate flow seperation
-calculate combustion instability modes
-
-eventually
-1. get ansyst o run through python
-2. get rocket trajectory and aero simulator
-3. cooling channel calculator
-4. film cooling calculator
-5. injegrate injector class
-
 # Rocket Configuration Visualizer
 
 <!-- Add information here explaining the visualizer -->
 
-This code sizes a rocket engine contour based on design specifications and thermochemical data imported from NASA CEA. It then computes flow properties based on quasi-1D isentropic flow assumptions and then estimates the wall heat transfer coefficient based on the Bartz approximation. In the future, this program will implement Cpropep directly and allow rapid sizing and optimization of a rocket engine through a GUI.
+This code sizes a rocket engine contour based on design specifications. There are two versions of this program. The first uses thermochemical data imported from NASA CEA(code in src folder) and the second uses a build in version of CEA to run the thermochemistry automatically(code in src_cea folder). The reason for keeping the origenal version is becasue the library used to run CEA can be difficult and time consuming to set up, so for those who need simple functionality it works well. 
+
+### src, original code functionality
+This code sizes a rocket engine contour based on design specifications and thermochemical data imported from NASA CEA. It then computes flow properties based on quasi-1D isentropic flow assumptions and then estimates the wall heat transfer coefficient based on the Bartz approximation. This data can then be displayed in a graph or exported for external calculations. 
+
+### src_cea, new code functionality
+This code has all the functionality of the original code but uses a built-in CEA thermochemistry calculator. Because the calculator is built in it allows for optimization functionality. This allows for the code to be able to size a rocket engine for a given optimal exit pressure, and then find operational values for any desired thrust level given the engine contour. In the near future, I will add the ability to size regenerative cooling channels using the thermochemical data and the ability to account for film cooling at different points in the chamber. I am also adding a class that will be able to sweep a range of many parameters and view the data so it can be used to better find optimal performance parameters. 
+
+### NOTE:
+This branch has a lot of rocket design related code that is currently irrelevant to the function of the Rocket Configuration Visualizer. These classes and scripts are work in progress features that will likely be added to the main code once they are functional.
+
+
 
 ## Python setup for Development
 
@@ -189,3 +161,42 @@ myreturn = d_stag * (1 + ((gam-1)/2 * mach**2))**(-1/(gam-1))
 ### other heat calcs
 
 ### wall thermal calcs
+
+# To Do List
+small tasks:
+make everything numpy arrays
+make flow seperation calculator
+make volume calculator take take convergine 
+
+cooling calculator to do:
+make "geometry" take input "contour" (see if radius or diameter is needed)
+
+major tasks
+1. bartz equasion needs a complete overhall to test accuracy, viscosity is a constant for some reason
+2. make engines class to run multiple engines
+3. make prop feed class that has tank stats and stuff
+4. make rocket class that takes engine and prop feed classes as inharitence
+5. make engines class somhow able to take rocket classes too and iterate
+6. look into making rocketCEA run faster
+7. make engine able to run with lower contour resolution
+8. look into making solveMach run faster
+9. code thrust level so it can do a linear sweep that is O(n) rather than the current O(nlog(n)) method
+
+major things to do:
+make rocket simulator with rocketpy
+complete overhall of equations
+check output curves to other caluculators to verify data accuracy
+look into making CEA run faster somehow(either by writing my own CEA wrapper of modifying one of the existing ones)
+code thrust level so it can do a linear sweep that is O(n) rather than the current O(nlog(n)) method
+code a UI that is easy to distribute, intuitive to use, and has full functionallity
+add 1d regen cooling channel caluclator(in progress by emmett)
+add film cooling calculation capabilities
+calculate flow seperation
+calculate combustion instability modes
+
+eventually
+1. get ansyst o run through python
+2. get rocket trajectory and aero simulator
+3. cooling channel calculator
+4. film cooling calculator
+5. injegrate injector class
