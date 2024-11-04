@@ -3,7 +3,7 @@ import os
 import sys
 parent_directory = os.path.abspath('..')
 sys.path.append(parent_directory)
-from RocketConfigurationVisualizer2.src_cea.engine import Engine
+from RocketConfigurationVisualizer.src_cea.engine import Engine
 
 #test engine 
 title = 'APRL Engine mu2 Sizing'

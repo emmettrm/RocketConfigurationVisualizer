@@ -239,10 +239,11 @@ class ThrustLevel:
             1.8) * c_p * math.pow(visc, 0.2) * math.pow((t_gas / t_boundary), (0.8 - 0.2 * 0.6)))
     
     def bartz2(self, d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall, gam, M):
+        #print(f"d_throat = {d_throat}\np_chamber = {p_chamber}\nc_star = {c_star}\nd = {d}\nc_p = {c_p}\nvisc = {visc}\nt_gas = {t_gas}\nt_wall = {t_wall}\ngam = {gam}\nM = {M}\n")
         t_boundary = (t_gas + t_wall) / 2
         Pr = 4*gam/(9*gam-9)
-        sig = 1/((0.5*(t_gas / t_boundary)*(1+(gam-1)/2*M**2)+0.5)**(0.68)*(1+(gam-1)/2*M**2)**0.12)
-        return (0.026 / d_throat**0.2 * (p_chamber*9.8 / c_star)**0.8 / Pr**0.6 * (d_throat / d)**1.8
+        sig = 1/((0.5*(t_wall / t_gas)*(1+(gam-1)/2*M**2)+0.5)**(0.68)*(1+(gam-1)/2*M**2)**0.12)
+        return (0.026 / d_throat**0.2 * (p_chamber / c_star)**0.8 / Pr**0.6 * (d_throat / d)**1.8
             * c_p * visc**0.2) * sig
 
     def throatAreaEquation(self, mdot, press, temp, rbar, gam): 

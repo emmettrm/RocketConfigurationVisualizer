@@ -6,7 +6,7 @@ scipy
 future
 pillow
 rocketprops
-
+pandas
 # for FEA
 # ffmpeg
 
