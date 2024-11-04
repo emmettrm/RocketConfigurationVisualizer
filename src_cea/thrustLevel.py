@@ -237,6 +237,13 @@ class ThrustLevel:
         t_boundary = (t_gas + t_wall) / 2
         return (0.026 / math.pow(d_throat, 0.2) * math.pow((p_chamber / c_star), 0.8) * math.pow((d_throat / d),
             1.8) * c_p * math.pow(visc, 0.2) * math.pow((t_gas / t_boundary), (0.8 - 0.2 * 0.6)))
+    
+    def bartz2(self, d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall, gam, M):
+        t_boundary = (t_gas + t_wall) / 2
+        Pr = 4*gam/(9*gam-9)
+        sig = 1/((0.5*(t_gas / t_boundary)*(1+(gam-1)/2*M**2)+0.5)**(0.68)*(1+(gam-1)/2*M**2)**0.12)
+        return (0.026 / d_throat**0.2 * (p_chamber*9.8 / c_star)**0.8 / Pr**0.6 * (d_throat / d)**1.8
+            * c_p * visc**0.2) * sig
 
     def throatAreaEquation(self, mdot, press, temp, rbar, gam): 
         press *= 100000
@@ -301,11 +308,13 @@ class ThrustLevel:
 
     def calcBartz(self):
         h_g_arr = self.contour.copy()
-        print('thr diameter:{}\nchamber pressure:{}\nc star:{}\nchamber cp:{}\nwall temp:{}'.format(self.thr.d, self.cham.p, self.Cstar, self.cham.cp, self.wall_temp))
+        print('thr diameter:{}\nchamber pressure:{}\nc star:{}\nchamber cp:{}\nwall temp:{}\ngam:{}\nmach:{}'.format(self.thr.d, self.cham.p, self.Cstar, self.cham.cp, self.wall_temp, self.thr.gam, self.mach_arr[1,1]))
         for i in range(len(h_g_arr[0])):
             #print('thr diameter:{}\nchamber pressure:{}\nc star:{}\ncontour:{}\nchamber cp:{}\ntemperature array:{}\nwall temp{}'.format(self.thr.d, self.cham.p, self.Cstar, self.contour, self.cham.cp, self.temp_arr, self.wall_temp))
-            h_g_arr[1,i] = self.bartz(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp) #add viscosity to this
+            #h_g_arr[1,i] = self.bartz(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp) #add viscosity to this
+            h_g_arr[1,i] = self.bartz2(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp, self.thr.gam, self.mach_arr[1,i]) #add viscosity to this
         return h_g_arr
+    
     '''
     def runRCC(self):
         self.data_in['e'] = #float(self.data_in['e'])

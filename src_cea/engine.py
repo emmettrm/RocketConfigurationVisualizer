@@ -59,12 +59,12 @@ class Engine:
             self.min = None
         self.chamber_volume = self.Lstar * self.max.thr.a
         self.chamber_length = self.chamber_volume / (math.pi * (self.Dcham / 2) ** 2) #NOTE: make this more accurate
-        st = time.time()
-        self.contourPoints, self.contour = self.nozzleGeneration()
-        et = time.time()
-        if self.filmCoolingPercent != 0:
-            self.filmCoolingHeatCalcs()
         if doContours:
+            st = time.time()
+            self.contourPoints, self.contour = self.nozzleGeneration()
+            et = time.time()
+            if self.filmCoolingPercent != 0:
+                self.filmCoolingHeatCalcs()
             print(f'contour generator run time" {et-st}s')
             st = time.time()
             self.area_arr = self.areas()
@@ -301,6 +301,7 @@ class Engine:
         print("Max Thrust: {0:.2f} N ({1:.2f} lbf)".format(self.max.thrust, (self.max.thrust*0.224809)))
         print("Max isp: {0:.2f} s".format(self.max.isp_s))
         print("Mass Flow Rate: {0:.2f} kg/s".format(self.max.mdot))  
+        print("Cp: {0:.2f} ".format(self.max.cham.cp))
         if self.filmCoolingPercent != 0:
             print("Max isp Adjusted: {0:.2f} s".format(self.max.isp_adjusted))
             print("Fuel Mass Flow Rate: {0:.2f} kg/s".format(self.max.fuelmdot))

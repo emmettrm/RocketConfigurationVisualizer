@@ -17,21 +17,21 @@ fuel water H 2.0 O 1.0  wt%=30.0
 h,cal=-68308.0  t(k)=298.15 rho,g/cc = 0.9998"""
 ]
 #print('{}'.format(customFuel[1]))
-pMaxCham = 38.5    #max thrust chamber pressure in bar
+pMaxCham = 39    #max thrust chamber pressure in bar
 Mr = 1.8 # propellant mixture ratio
 pAmbient = 1.01325 #bar
 #pMaxCham = 25*14.5     #max thrust chamber pressure in bar
 #pAmbient = 1.01325*14.5 #bar
 pMinExitRatio = [] #trottle exit pressure
 #set veriables
-mdotMax = 1.474        #max thrust mass flow rate
+mdotMax = 1.48        #max thrust mass flow rate
 filmCoolingPercent = 0.0
 Lstar = 1.02
 Dcham = 3.375 * 0.0254 #in meters
 conv_angle = math.pi / 4 # rad, 45deg
 div_angle = math.pi / 12  # rad, 15deg
-wall_temp = 650 # K
-fuel_delta_t = 300 # K
+wall_temp = 473 # K
+fuel_delta_t = 100 # K
 #fuel_cp = 2010 # J/KgK
 r1 = 1
 r2 = 1
@@ -44,7 +44,7 @@ eta = 0.9
 test = Engine(title, fuel, ox, nozzle_type, Mr, pMaxCham, mdotMax, Lstar, Dcham, wall_temp, r1, r2, r3, conv_angle, fuel_delta_t, pMinExitRatio = pMinExitRatio, filmCoolingPercent = filmCoolingPercent, div_angle = div_angle, contourStep = step, customFuel = customFuel, frozen = 1, pAmbient = pAmbient, doContours = doContours, eta = eta)
 test.variablesDisplay(minthrust = False)
 #test.debugAndRawVariablesDisplay()
-test.graphDisplay(minthrust = False)
+#test.graphDisplay(minthrust = False)
 #test.runTime()
 #test.fullCEAOut()
 #test.testRunCEAOut()
