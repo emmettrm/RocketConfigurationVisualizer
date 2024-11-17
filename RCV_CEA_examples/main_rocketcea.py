@@ -40,8 +40,9 @@ step = 1e-2 #array resolution
 nozzle_type = 'conical' #'bell80'
 doContours = True
 eta = 0.9
+frozen = 1
 
-test = Engine(title, fuel, ox, nozzle_type, Mr, pMaxCham, mdotMax, Lstar, Dcham, wall_temp, r1, r2, r3, conv_angle, fuel_delta_t, pMinExitRatio = pMinExitRatio, filmCoolingPercent = filmCoolingPercent, div_angle = div_angle, contourStep = step, customFuel = customFuel, frozen = 1, pAmbient = pAmbient, doContours = doContours, eta = eta)
+test = Engine(title, fuel, ox, nozzle_type, Mr, pMaxCham, mdotMax, Lstar, Dcham, wall_temp, r1, r2, r3, conv_angle, fuel_delta_t, pMinExitRatio = pMinExitRatio, filmCoolingPercent = filmCoolingPercent, div_angle = div_angle, contourStep = step, customFuel = customFuel, frozen = frozen, pAmbient = pAmbient, doContours = doContours, eta = eta)
 test.variablesDisplay(minthrust = False)
 #test.debugAndRawVariablesDisplay()
 #test.graphDisplay(minthrust = False)

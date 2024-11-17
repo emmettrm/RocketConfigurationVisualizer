@@ -11,6 +11,7 @@ from .runCEA import RunCEA
 
 class ThrustLevel:
     def __init__(self, fuel, cea, pCham, mr, mdot, area_arr, pAmbient = None, ae = None, frozen = 1, eta = 1):
+        self.temp1 = 0
         if ae == None:
             #print('chamber pressure:{}\nambient pressure:{}'.format(pCham, pAmbient))
             st = time.time()
@@ -231,20 +232,21 @@ class ThrustLevel:
     def calcThrust(self, pAmbient):#make dependant on altitude input
         self.thrust = (self.mdot * self.exit.mach * self.exit.son + (self.exit.p - pAmbient)*self.exit.a) * self.eta
         print(f'eta: {self.eta}')
-
+    '''
     def bartz(self, d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall):
         """bartz equation calculator"""
         t_boundary = (t_gas + t_wall) / 2
         return (0.026 / math.pow(d_throat, 0.2) * math.pow((p_chamber / c_star), 0.8) * math.pow((d_throat / d),
             1.8) * c_p * math.pow(visc, 0.2) * math.pow((t_gas / t_boundary), (0.8 - 0.2 * 0.6)))
-    
-    def bartz2(self, d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall, gam, M):
-        #print(f"d_throat = {d_throat}\np_chamber = {p_chamber}\nc_star = {c_star}\nd = {d}\nc_p = {c_p}\nvisc = {visc}\nt_gas = {t_gas}\nt_wall = {t_wall}\ngam = {gam}\nM = {M}\n")
+    '''
+    def bartz2(self, d_throat, p_chamber, c_star, d, c_p, visc, t_gas, t_wall, gam, M, Pr):
+        # Pr = 4*gam/(9*gam-9)
+        if self.temp1 == 0:
+            print(f"d_throat = {d_throat}\np_chamber = {p_chamber}\nc_star = {c_star}\nd = {d}\nc_p = {c_p}\nvisc = {visc}\nt_gas = {t_gas}\nt_wall = {t_wall}\ngam = {gam}\nM = {M}\nPr = {Pr}\n")
+            self.temp1 += 1
         t_boundary = (t_gas + t_wall) / 2
-        Pr = 4*gam/(9*gam-9)
         sig = 1/((0.5*(t_wall / t_gas)*(1+(gam-1)/2*M**2)+0.5)**(0.68)*(1+(gam-1)/2*M**2)**0.12)
-        return (0.026 / d_throat**0.2 * (p_chamber / c_star)**0.8 / Pr**0.6 * (d_throat / d)**1.8
-            * c_p * visc**0.2) * sig
+        return ((0.026/d_throat**0.2)*((c_p*visc**0.2)/(Pr**0.6))*((p_chamber/c_star)**0.8)*((d_throat / d)**1.8)*sig)
 
     def throatAreaEquation(self, mdot, press, temp, rbar, gam): 
         press *= 100000
@@ -313,7 +315,7 @@ class ThrustLevel:
         for i in range(len(h_g_arr[0])):
             #print('thr diameter:{}\nchamber pressure:{}\nc star:{}\ncontour:{}\nchamber cp:{}\ntemperature array:{}\nwall temp{}'.format(self.thr.d, self.cham.p, self.Cstar, self.contour, self.cham.cp, self.temp_arr, self.wall_temp))
             #h_g_arr[1,i] = self.bartz(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp) #add viscosity to this
-            h_g_arr[1,i] = self.bartz2(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp, self.thr.gam, self.mach_arr[1,i]) #add viscosity to this
+            h_g_arr[1,i] = self.bartz2(self.thr.d, self.cham.p*100000, self.Cstar, self.contour[1,i]*2, self.cham.cp*1000, 0.85452e-4, self.temp_arr[1,i], self.wall_temp, self.thr.gam, self.mach_arr[1,i], self.cham.pr) #add viscosity to this
         return h_g_arr
     
     '''
